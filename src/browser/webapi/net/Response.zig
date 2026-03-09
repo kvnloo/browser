@@ -21,6 +21,7 @@ const js = @import("../../js/js.zig");
 const Http = @import("../../../http/Http.zig");
 
 const Page = @import("../../Page.zig");
+const Session = @import("../../Session.zig");
 const Headers = @import("Headers.zig");
 const ReadableStream = @import("../streams/ReadableStream.zig");
 
@@ -76,7 +77,7 @@ pub fn init(body_: ?[]const u8, opts_: ?InitOpts, page: *Page) !*Response {
     return self;
 }
 
-pub fn deinit(self: *Response, shutdown: bool, page: *Page) void {
+pub fn deinit(self: *Response, shutdown: bool, session: *Session) void {
     if (self._transfer) |transfer| {
         if (shutdown) {
             transfer.terminate();
@@ -85,7 +86,7 @@ pub fn deinit(self: *Response, shutdown: bool, page: *Page) void {
         }
         self._transfer = null;
     }
-    page.releaseArena(self._arena);
+    session.releaseArena(self._arena);
 }
 
 pub fn getStatus(self: *const Response) u16 {
